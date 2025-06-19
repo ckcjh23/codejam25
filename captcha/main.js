@@ -28,7 +28,7 @@ const stroke_length_limit = 100;
 
 // whether to guarantee a fail for the first time the user reaches the last round
 // it mostly means that there is just more rounds, but seems like there's not
-const guaranteed_fail = false;
+const guaranteed_fail = true;
 
 // END OF SETTINGS
 

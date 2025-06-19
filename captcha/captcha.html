@@ -11,42 +11,45 @@
       background: pink;
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
+      font-family: "Roboto", sans-serif;
     }
-
-    #captcha-container {
-      background: white;
-      width: 390px;
-      height: 300px;
-    }
-
     /* Your style here... */
   </style>
+
+  <link rel="stylesheet" href="style.css"/>
 </head>
 
 <body>
   <div id="captcha-container">
     <!-- Add your CAPTCHA here: -->
-    Hello world!
+    <div id="loading_overlay" class="hidden">
+      <div id="loading_ring"><div></div><div></div><div></div><div></div></div>
+    </div>
 
-    <!-- We've added a sample button. Feel free to remove it: -->
-    <button id="solve">
-      Solve!
-    </button>
+    <div id="info_overlay" class="hidden">
+      <div id="info_panel">
+        <h2>Having trouble?</h2>
+        <p>Might be a case of skill issue. Make sure your drawings are centered and take up most of the canvas.</p>
+      </div>
+    </div>
+
+    <div id="captcha_header">
+      <div id="progress_bar"></div>
+      <a id="prompt">Draw </a>
+    </div>
+    
+    <canvas id="drawable_canvas"></canvas>
+
+    <div id="captcha_buttons">
+      <a id="info" class="clickable"><img id="info_icon" src="info_icon.png"></a>
+      <a id="error_message" class="hidden">Something went wrong. Try again</a>
+      <button id="submit" class="clickable">Submit</button>
+    </div>
+      
   </div>
 
-  <script type="text/javascript">
-    (function(window, document){
-      // This is how you tell the parent window that the CAPTCHA was successful.
-      function captchaSuccess() {
-        window.top.postMessage("success", '*');
-      }
-
-      // Your CAPTCHA code goes here, we've added a simple example below:
-      document.getElementById('solve')
-           .addEventListener('click', () => captchaSuccess());
-
-    })(window, document);
-  </script>
+  <script src="model_weights.js"></script> 
+  <script src="infer_model.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>

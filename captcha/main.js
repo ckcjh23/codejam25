@@ -7,7 +7,7 @@
 // topk = 2 ---> 92.1% accuracy
 // topk = 3 ---> 94.6% accuracy
 // topk = 5 ---> 96.7% accuracy
-const topk = 2;
+const topk = 3;
 
 // how many rounds
 const round_count = 5;
@@ -15,10 +15,10 @@ const round_count = 5;
 // how much time to wait after each submission (in seconds)
 const fake_loading_time = 3;
 
-// canvas stroke width - do not change for best results
+// canvas stroke width - DO NOT CHANGE for best results
 const stroke_width = 2;
 
-// contrast factor used when downscaling the image - do not change for best results
+// contrast factor used when downscaling the image - DO NOT CHANGE for best results
 const contrast_factor = 1.7;
 
 // how much can the user draw before the "pen" stops writing
@@ -29,6 +29,10 @@ const stroke_length_limit = 100;
 // whether to guarantee a fail for the first time the user reaches the last round
 // it mostly means that there is just more rounds, but seems like there's not
 const guaranteed_fail = true;
+
+// if the drawing has this many or fewer non-zero pixels after rescaling to 32x32, it's considered as a fail
+// this is to prevent the user from spamming "submit" and hoping they get a target class that is the top prediction for an empty image
+const pixel_count_fail_thresh = 5;
 
 // END OF SETTINGS
 
@@ -230,9 +234,20 @@ function submit(e) {
     change_visibility("error_message", false);
 
     let input = get_input();
-    let predictions = get_predictions(input);
-    let idx_of_target = predictions.indexOf(target_class);
-    let correct = idx_of_target < topk;
+
+    let nonzero_pixels_count = 0;
+    for (let i = 0; i < 32 * 32; i++) {
+        if (input[i] != 0) nonzero_pixels_count++;
+    }
+
+    let correct = false;
+
+    // infer the model only if the image has more non-zero pixels than the threshold
+    if (nonzero_pixels_count > pixel_count_fail_thresh) {
+        let predictions = get_predictions(input);
+        let idx_of_target = predictions.indexOf(target_class);
+        correct = idx_of_target < topk;
+    }
 
     // if last round and guaranteed fail is on
     if (guaranteed_fail && !reached_last_round && round == round_count - 1) {
